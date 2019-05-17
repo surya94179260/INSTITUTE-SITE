@@ -1,0 +1,466 @@
+INTRODUCTION
+
+The Student Information System is basically a portal which allows us to get ourselves registered officially in the institute with all the necessary credentials. The Admin is basically the one who attends all the requests made by the students who went themselves to be registered by either accepting or deleting the requests.
+The website which is made by us has the above features. If we are already registered, then we just need to login and then view our profile but if we aren't registered, then we will need to fill the sign up form and then our request to get registered will go to the admin who will have the sole authority to view our credentials and decide to accept or reject.
+All the pages in the website are implemented using html, css, javascript and php.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+STUDENT'S PORTAL
+
+HOME PAGE
+
+Well, when we say the home page, it is nothing but the page containing the brief discussion of the college as well as an overview of the college.The home page contains the logo of NIT Durgapur on the left and the name of the college in the center.
+Then starts the navigation bar which contains the following:
+HOME BUTTON:On clicking this button, we will be taken to the home page.
+LOGIN BUTTON:On clicking this button, we will have two options i.e, either to go to administrator login or student's login.
+SIGN UP BUTTON:On clicking this button, we will be taken to the sign up page where we can get ourselves registered by filling in the details.
+ABOUT US BUTTON:On clicking this button, we will be taken to the page which contains a brief description about the department-INFORMATION  TECHNOLOGY.
+After this navigation bar, there is an image of the college which is displayed below which , there is a small description of the college.
+The page is displayed with so variations in font as well as colour using css files which are imported using:
+<link rel="stylesheet" type="text/css" href="css/home1.css">
+
+SIGN-UP PAGE
+
+This is the registeration page which we need to fill if we don't have a login-id. This page contains many fields as well as its validations using javascript.
+The form is divided into three parts: Personal Details, Academic Details and Login Details.
+
+PERSONAL DETAILS:
+
+First name: The first name of the student needs to be entered . The input type is text and if we enter a digit or any special characters , it will show an error.If first name is empty, error will pop up.
+
+Last name: The Last name of the student needs to be entered . The input type is text and if we enter a digit or any special characters , it will show an error.If last name is empty, error will pop up.
+
+Date of Birth: The Date of birth of the student needs to be entered and here that particular format of the type 'date' in mysql needs to be entered. The example is given in the placeholder value and if we don't enter that way, registeration will be failed.If DOB is empty, error will pop up.
+
+Age: As soon as we enter the date of birth age will be calculated automatically as shown in javascript. But if DOB is empty, age will be NaN for example.
+
+Mobile Number: Here the mob-no. needs to be entered but it should be of 10 digits and all the digits consecutively shouldn't be zero. This is checked in the javascript part.The type field in the input is text.
+
+Gender: The type 'radio' is used in the input. We just need to choose out of the options what is our gender. Both can't be chosen.
+
+Present address:The type is 'text' in the input and this field is compulsory that need to be filled. We need to supply our present address.
+
+Permanent address: By using the type 'radio', two options are created whether the present address is same as permananent address or not.If it is not same , then we need to fill the permanent address where as usual , the type is 'text' in the input field.
+
+City: The type is 'text' in the input and if any digit or special characters are entered , it will show an error.
+
+Pincode: Pin code is basically a number of 6 digits, so if w enter a number more than 6 digits, or any characters like alphabets, then it will show an error.
+
+State and Country: Both have same features for validation.The type is 'text' in the input and if any digit or special characters are entered , it will show an error.
+
+
+ACADEMIC DETAILS:
+
+Examination:This comprises of 4 things, 10th class details,12th class details, Undergraduation details, Postgraduation details. All details need to be filled accordingly.
+
+Course: If we click on Btech or Mtech, a drop down button will open asking us for the branch which we want to pursue for the chosen course.
+	e.g:
+		<select name="branch">
+		<option value="0">--Select--</option>
+	            <option value="BT">Biotechnology</option>
+		<option value="CHE">Chemical engineering</option>
+		. . . .
+	This way dropdown list works.
+
+Registeration no.:A 8 digit-no. having the type int in the input.Only digits need to be entered else an error will pop up.
+
+Roll no,:As soon as the branch and registeration no. are filled, automatically the year and the department for the roll no. filed will appear , we just need to fill the exact roll call.
+	e.g 15/IT/   will appear, we will now just need to fill the actual roll no. 
+
+
+LOGIN DETAILS:
+
+Email-id: This field has validation such that if your entered text doesn't contain '@', then an error will show up. The type has to be an email type.
+
+Password and Confirm Password: The password can be anything but both the password and confirm password field needs to be same else an error will pop up.
+
+Submit: On clicking this button, the form will be sent for validation for further incorrect format checking and if everything is  cone, the credentials will be sent to the admin for his approval to the request for getting registered.
+
+Reset: On clicking this button, all the details which you have entered in the form will get omitted.
+
+Now On submitting the form, if you get the information written registeration failed, which means the user has entered the input in wrong format.
+
+ABOUT US PAGE:
+
+On clicking this button on the navbar, we will be taken to the page which contains a brief description about the department-INFORMATION TECHNOLOGY.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+STUDENT-LOGIN PAGE:
+
+This basically is a page for the already registered students to login and view their profile or edit it.
+The validation takes place for email-id and password in the same way as it was done for sign up page.
+
+
+<?php
+  if (logged_in()) {
+    redirect_to("user.php");
+  }
+
+  if (isset($_POST['submit'])) {
+    $Email = $_POST['Email_Id'];
+    $password = $_POST['password'];
+   
+    
+    $query = "SELECT id, email FROM student_details ";
+    $query .= "WHERE email = '{$Email}' ";
+    $query .= "AND pwd = '{$password}' and status=1";
+    $result_set = mysqli_query($connection,$query);
+    global $message;
+    $message = "";
+    if( !$result_set ) {
+    //echo("Error description: " . mysqli_error($connection));
+    $message = "<h4><b>Error in connection<b></h4>";
+    echo $message;
+    }
+
+   
+    if (mysqli_num_rows($result_set)==1){
+        $found_user = mysqli_fetch_array($result_set);
+        $_SESSION['user_id'] = $found_user['id'];
+        $_SESSION['Email'] = $found_user['email'];
+        redirect_to("user.php");
+      } else {
+        $message = "<h4><b>Wrong Email or password or not accepted<b></h4>";
+        echo $message;
+      }
+    }
+?>
+
+This is the code to check whether that email-id is already in the database or not and if not, it will show wrong username else if the password is wrong , then an error will come up.
+And if you get logged in, then a page will be displayed with the navigation bar having four things:
+Home page,Details,Result and log out options.
+When we say home page , that is basically the welcoming page . When we go for the details button, we get to know our own credentials.
+The result button basically displays the marks of the exams if conducted else will show no exams were given yet.
+And finally the log out button which will log out the user and terminate the current session.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ADMIN-LOGIN PAGE:
+
+Same goes with the admin.
+
+<?php
+  // if (logged_in()) {
+  //   redirect_to("admin.php");
+  // }
+
+  if (isset($_POST['submit'])) {
+
+     if (logged_in()) {
+    redirect_to("admin.php");
+  }
+
+    
+    $Email_Id = $_POST['Email_Id'];
+    $password = $_POST['password'];
+
+    // echo $Email_Id;
+    // echo $password;
+    
+    $query = "SELECT id,email,pwd FROM admin_login ";
+    $query .= "WHERE email = '{$Email_Id}' ";
+    $query .= "AND pwd = '{$password}' ";
+    $result_set = mysqli_query($connection,$query);
+    
+    if( !$result_set ) {
+    $message=("Error description: " . ($connection));
+    }
+
+    global $message;
+    $message = "";
+    if (mysqli_num_rows($result_set)==1){
+        $found_user = mysqli_fetch_array($result_set);
+        $_SESSION['user_id'] = $found_user['id'];
+        $_SESSION['Email_Id'] = $found_user['email'];
+        redirect_to("admin.php");
+      } else {
+        $message = "<h4><b>Wrong Email_Id or password</b></h4>";
+        echo $message;
+      }
+    }
+
+?> 
+In this way, the email-id and password are verified and if it is correct , then the admin's portal opens up else it will show wrong username or password.
+
+
+								
+
+
+ADMIN'S PORTAL
+
+
+In the same way as the student's portal, admin's portal will have the navigation bar comprising of the following buttons:
+
+Home:On clicking this button we will be taken to the home page which contains the table having columns as name, email, registeration number,mobile no. and two options either to accept entries or delete it.
+
+Student-info: On clicking this button, a drop down list will appear having two options either to edit student information or delete student information.If we go to edit student-info, we will be taken to a page having all the students who are registered and we will have the option to choose whose details , we want to update.
+
+	<?php
+	$query = "Select * from student_details";
+	$result = mysqli_query($connection,$query);
+
+	while($row = mysqli_fetch_assoc($result))
+	{
+		if (!$_POST) {
+			$message="No one are selected to edit";
+			redirect_to("admin_student_edit_error.php");
+		}
+		// print_r($_POST);
+		if(array_key_exists($row['id'], $_POST)){
+			$index = $row['id'];
+			$query1 = "Select * from student_details where id ='{$index}'";
+
+			$_SESSION['id1'] = $index;
+			$result_set = mysqli_query($connection,$query1);
+			if( !$result_set ) {
+    			$message= ("Error description: " . mysqli_error($connection));
+    		}
+
+			$row2 = mysqli_fetch_assoc($result_set);
+			$firstname = $row2['f_name'];
+			$lastname = $row2['l_name'];
+			$address = $row2['p_addr'];
+			$email = $row2['email'];
+			$mobile = $row2['m_no'];
+			$nationality = $row2['country'];
+			 // print_r($result_set);
+			break;
+		}
+	}
+?>
+The details of all the students are fetched and then displayed on the table.If we click on update button, we will be taken to a page where all the credentials which we want to update can be done and then we just need to click on submit button and the details are updated.
+
+And now if we go to delete student-info, the same way all the details will be shown and we will need to choose , whose details we want to delete and then click on delete button.
+
+<?php
+	$message="";
+	if(isset($_POST['submit'])){
+		$count=0;
+		while($row = mysqli_fetch_assoc($result))
+		{
+			$index = $row['id'];
+			// print_r($_POST);
+			if(array_key_exists($index, $_POST))
+			{
+				$count = $count+1;
+				// echo $index;
+				// print_r($_POST);
+				$query = "SELECT * FROM student_details ";
+			    $query .= "WHERE id = '{$index}' ";
+			    $result_set = mysqli_query($connection,$query);
+			    confirm_query($result_set);
+
+			    if (mysqli_num_rows($result_set)==1)
+			    {
+			    	$query2 = "DELETE FROM student_details ";
+			    	$query2 .= "WHERE id = '{$index}' ";
+			    	$result_set2 = mysqli_query($connection,$query2);
+			    	confirm_query($result_set2);
+			    }
+			}
+		}
+		global $message;
+		$message= "";
+		if($count<=0)  $message = 'No students were selected';
+		else $message= 'Selected students deleted';
+	}
+	$query = "Select id,f_name,email,m_no,regn_no from student_details";
+	$result = mysqli_query($connection,$query);
+?>
+
+Student:On clicking this button, a drop-down list will appear having two options either to add new students or view the accepted list, i.e, all the registered students. On clicking the add students button, a student sign-up page will appear which will have exactly the same features as it was in the registeration form in the student's portal.
+<form name="Student_signup" onsubmit ="return validateForm()" action="add_student_form_processing.php" method="post">
+After validation , the add_student_form_processing.php will be in action which means all the input will be sent to the database by setting up the connection.
+
+<?php
+	if(!confirm_logged_in()) redirect_to("admin_login.php");
+?>
+
+
+<?php	
+		if(isset($_POST['submit']))
+		{
+			// Perform query
+			// print_r($_POST);
+			$email=$_POST["Email_Id"];
+			$pwd=sha1($_POST["password"]);
+			$f_name=$_POST["First_Name"];
+			$l_name=$_POST["Last_Name"];
+			$dat=$_POST["dob"];
+			$age=$_POST["age"];
+			$m_no=$_POST["Mobile_Number"];
+			$p_adrr=$_POST["addr"];
+			$pm_adrr=$_POST["Address"];
+			$city=$_POST["City"];
+			$pin=$_POST["Pin_Code"];
+			$state=$_POST["State"];
+			$country=$_POST["Country"];
+			$gender=$_POST["Gender"];
+			$regn_no=$_POST["regn_no"];
+			$branch=$_POST["branch"];
+			$course=$_POST["course"];
+			$r_no=$_POST["roll_no"];
+			// echo $r_no;
+
+			$sql="SELECT * FROM student_details WHERE regn_no='$regn_no'";
+			$check=mysqli_query($connection,$sql);
+ 		    $checkrows=mysqli_num_rows($check);
+
+ 		    if($checkrows>0) {
+			      $message = "<h2>User with same registration number already exists.Try again with a different registration number</h2>";
+			   } else {  
+			 $query = "INSERT INTO student_details(f_name,l_name,date,age,m_no,p_addr,pm_addr,city,pin,state,country,regn_no,branch,course,roll_no,email,pwd,status) VALUES ('$f_name','$l_name','$dat','$age','$m_no','$p_adrr','$pm_adrr','$city','$pin','$state','$country','$regn_no','$branch','$course','$r_no','$email','$pwd',1)";
+
+			$result = mysqli_query($connection,$query);
+
+			if(!$result){
+				$message = "Registration Failed" ;
+			}
+			else{
+				$message = "Registration Successful";
+			}
+		}
+		
+			// Close the database connection
+			mysqli_close($connection);
+		}
+?>
+
+Logout: As soon as we click on this button, the admin will be logged out and will be redirected to admin login page.
+
+<?php
+	$_SESSION['user_id'] = null;
+	$_SESSION['email'] = null;
+	redirect_to("admin_login.php");
+?>
+
+This completes the features of admin's portal.
+
+
+
+
+
+
+
+
+
+
+SESSION MANAGEMENT:
+
+ Session variables are used to store individual client's information on the web server for later use, as a web server doesn't know which client's request to be respond because HTTP address doesn't maintain state.
+
+To start a PHP Session:
+
+<?php 
+	session_start();
+	//Do something
+?>
+
+To store values in PHP  session variable:
+
+<?php 
+	session_start();
+	$_SESSION['login_user']=$username;
+	//initializing session with value of PHP variable
+?>
+
+To read values of PHP session variable:
+
+<?php 
+	session_start();
+	$_SESSION['login_user']=$username;
+	//initializing session with value of PHP variable
+	echo $_SESSION['login_user'];
+?>
+
+
+To unset or destroy a PHP session:
+
+<?php
+	session_destroy()
+ 	if(isset($_SESSION['id']))
+	unset($_SESSION['id']);
+?>
+
+
+CHALLENGES FACED AND SOLUTIONS FOR THE SAME
+
+The biggest challenge for our group was that none of us were into this field of web development. Coming up with a well established front-end and back-end was a challenge. It took a long time for making the registeration page and validating it at first. The html page still was easy but after implementing css, I was totally blank because things started going wrong.
+The only option left was to go through the you tube tutorials. W3schools too proved to be a helping hand.I first made a registeration page that had minor details and tried implementing the <form></form> tag and then implmented css. When it worked after quite a long time,we then entered the further details. All was good because now we got the idea of making the web pages and linking it but then the problem arose while connecting the database to the front-end.
+For this, we referred only W3schools. Database got connected and then the major challenge for us was to insert the values to the database. We had to make a proper list of the names we kept of the respective fields and the attributes in the two tables of the database used.
+After the values went to the database, then more or less all the problems were sorted.
+
+
+
+UNIQUE FEATURES OF THE WEBSITE:
+
+
+The best feature of this website is that not all the students who want themselves to get registered can register themselves. Only the ones whose request is accepted by the admin can register themselves. Moreover, the admin can delete as well as edit the credentials of the registered students as well as delete the request entries. This website also has registeration form with a number of validations so that not any details supplied can be accepted.
+
+
